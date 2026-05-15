@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吞嚥困難篩檢問卷</title>
+  <style>
+    :root {
+      --primary: #2c6e9c;
+      --primary-light: #e8f0f8;
+      --danger: #c0392b;
+      --warning: #e67e22;
+      --success: #27ae60;
+      --text: #2c3e50;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border: #dee2e6;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), #1a4a6e);
+      color: white;
+      padding: 32px 28px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+
+    header .subtitle {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    header .ref {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .intro-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--primary);
+    }
+
+    .intro-card p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* Progress */
+    .progress-bar {
+      background: var(--border);
+      border-radius: 10px;
+      height: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #3498db);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      text-align: right;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    /* Question */
+    .question {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+    }
+
+    .question:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .question .q-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .question .q-num {
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .question .q-text {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .options label {
+      flex: 1;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      background: white;
+    }
+
+    .options label:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .options input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #bbb;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .options input[type="radio"]:checked {
+      border-color: var(--primary);
+    }
+
+    .options input[type="radio"]:checked::after {
+      content: "";
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 10px; height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+    }
+
+    .options label:has(input:checked) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .options label.opt-a input:checked ~ .opt-label { font-weight: 700; }
+
+    .indicator {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #999;
+      text-align: right;
+    }
+
+    /* Submit */
+    .submit-area {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), #1a4a6e);
+      color: white;
+      border: none;
+      padding: 14px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(44, 110, 156, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(44, 110, 156, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: #888;
+      padding: 10px 28px;
+      font-size: 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      border-color: #999;
+      color: var(--text);
+    }
+
+    /* Result */
+    .result {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 24px;
+      box-shadow: var(--shadow);
+      display: none;
+      text-align: center;
+    }
+
+    .result.show { display: block; }
+
+    .result .result-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    .result .result-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .result .result-detail {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    .result .result-breakdown {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .result .result-breakdown table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .result .result-breakdown td {
+      padding: 4px 8px;
+    }
+
+    .result .result-breakdown td:last-child {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .result.danger { border: 2px solid var(--danger); }
+    .result.danger .result-title { color: var(--danger); }
+    .result.warning { border: 2px solid var(--warning); }
+    .result.warning .result-title { color: var(--warning); }
+    .result.success { border: 2px solid var(--success); }
+    .result.success .result-title { color: var(--success); }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      padding-bottom: 40px;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body { padding: 12px; }
+      header { padding: 24px 18px; }
+      header h1 { font-size: 20px; }
+      .question { padding: 16px; }
+      .options label {
+        min-width: 80px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .question .q-text { font-size: 14px; }
+      .btn-submit { padding: 12px 32px; font-size: 16px; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-submit, .btn-reset { display: none; }
+      .question { break-inside: avoid; }
+      header { background: var(--primary) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .question .q-num { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>📋 吞嚥困難篩檢問卷</h1>
+    <div class="subtitle">Dysphagia Screening Questionnaire</div>
+    <div class="ref">參考文獻：Ohkuma R, et al. JJDR, 6(1):3-8, 2002</div>
+  </header>
+
+  <div class="intro-card">
+    <p><strong>填寫說明：</strong>請依近 2～3 年的情況進行回答。每一個都是很重要的症狀，請仔細閱讀後圈選。</p>
+  </div>
+
+  <div class="progress-text" id="progressText">0 / 15 題已填寫</div>
+  <div class="progress-bar">
+    <div class="fill" id="progressFill"></div>
+  </div>
+
+  <!-- Questions will be injected by JS -->
+  <div id="questionsContainer"></div>
+
+  <div class="submit-area">
+    <button class="btn-submit" id="btnSubmit" disabled onclick="checkResult()">查看篩檢結果</button>
+    <button class="btn-reset" onclick="resetAll()">重新填寫</button>
+  </div>
+
+  <div class="result" id="resultBox">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-detail" id="resultDetail"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+
+  <footer>
+    本問卷僅供吞嚥困難初步篩檢參考，不作為診斷依據。<br>
+    如有吞嚥問題請諮詢專業醫療人員。<br>
+    原始問卷來自「語言治療資訊讚」
+  </footer>
+</div>
+
+<script>
+  const questions = [
+    { id: 1, text: '曾經被診斷為肺炎嗎？', a: '經常反覆', b: '只有一次', c: '沒有' },
+    { id: 2, text: '有體重減輕的現象嗎？', a: '明顯的', b: '很少', c: '沒有' },
+    { id: 3, text: '曾感受到難以吞嚥東西的情形？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 4, text: '吃東西的時候曾經有嗆咳的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 5, text: '喝茶的時候曾經有嗆咳的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 6, text: '吃飯時、吃飯後，是否喉嚨有咕嚕咕嚕（卡痰感覺）？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 7, text: '曾感覺喉嚨仍有食物殘留的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 8, text: '會覺得吃一餐飯時間拉長了，進食速度變慢了嗎？', a: '明顯的', b: '很少', c: '沒有' },
+    { id: 9, text: '會覺得硬的食物有變得不好吞嗎？', a: '明顯的', b: '很少', c: '沒有' },
+    { id: 10, text: '曾經有食物從嘴裡掉出來的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 11, text: '曾經有口腔中有食物殘留的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 12, text: '曾經有食物或胃酸從胃部逆流到喉嚨的情形嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 13, text: '曾經有食物留在胸口、卡住的感覺嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 14, text: '曾經在半夜睡到一半因咳嗽咳醒嗎？', a: '經常', b: '有時候', c: '沒有' },
+    { id: 15, text: '聲音是否變得沙沙的？（嘶啞、沙啞聲）', a: '明顯的', b: '很少', c: '沒有' }
+  ];
+
+  const container = document.getElementById('questionsContainer');
+
+  questions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">${idx + 1}</span>
+        <span class="q-text">${q.text}</span>
+      </div>
+      <div class="options">
+        <label>
+          <input type="radio" name="q${q.id}" value="A" onchange="updateProgress()">
+          <span class="opt-label">A. ${q.a}</span>
+        </label>
+        <label>
+          <input type="radio" name="q${q.id}" value="B" onchange="updateProgress()">
+          <span class="opt-label">B. ${q.b}</span>
+        </label>
+        <label>
+          <input type="radio" name="q${q.id}" value="C" onchange="updateProgress()">
+          <span class="opt-label">C. ${q.c}</span>
+        </label>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  function getAnswers() {
+    const answers = [];
+    questions.forEach(q => {
+      const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
+      answers.push(sel ? sel.value : null);
+    });
+    return answers;
+  }
+
+  function updateProgress() {
+    const answers = getAnswers();
+    const answered = answers.filter(a => a !== null).length;
+    const total = questions.length;
+    document.getElementById('progressText').textContent = `${answered} / ${total} 題已填寫`;
+    document.getElementById('progressFill').style.width = `${(answered / total) * 100}%`;
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = answered < total;
+  }
+
+  function checkResult() {
+    const answers = getAnswers();
+    const countA = answers.filter(a => a === 'A').length;
+    const countB = answers.filter(a => a === 'B').length;
+    const countC = answers.filter(a => a === 'C').length;
+
+    const box = document.getElementById('resultBox');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    const detail = document.getElementById('resultDetail');
+    const breakdown = document.getElementById('resultBreakdown');
+
+    box.className = 'result show';
+    box.classList.remove('danger', 'warning', 'success');
+
+    // Detailed breakdown of which questions had A/B/C
+    let aList = [];
+    let bList = [];
+    questions.forEach((q, i) => {
+      if (answers[i] === 'A') aList.push(`第${q.id}題`);
+      if (answers[i] === 'B') bList.push(`第${q.id}題`);
+    });
+
+    let breakdownHTML = `<table>
+      <tr><td>選 A（經常／明顯反覆）</td><td>${countA} 題</td></tr>
+      <tr><td>選 B（有時候／很少）</td><td>${countB} 題</td></tr>
+      <tr><td>選 C（沒有）</td><td>${countC} 題</td></tr>
+    </table>`;
+
+    if (aList.length > 0) {
+      breakdownHTML += `<p style="margin-top:10px;color:var(--danger);font-weight:600;">⚠ 選 A 項目：${aList.join('、')}</p>`;
+    }
+
+    breakdown.innerHTML = breakdownHTML;
+
+    if (countA > 0) {
+      // At least one A → 吞嚥困難
+      icon.textContent = '⚠️';
+      title.textContent = '篩檢結果：吞嚥困難';
+      detail.textContent = '您有至少一項症狀達到「經常／明顯反覆」的程度，建議進一步接受專業吞嚥評估。';
+      box.classList.add('danger');
+    } else if (countB > 0) {
+      // Only B's, no A's → 疑似吞嚥困難
+      icon.textContent = '🔍';
+      title.textContent = '篩檢結果：疑似吞嚥困難';
+      detail.textContent = '您雖然沒有高度頻率的症狀，但部分項目勾選了「有時候／很少」，建議持續觀察或諮詢專業意見。';
+      box.classList.add('warning');
+    } else {
+      // All C
+      icon.textContent = '✅';
+      title.textContent = '篩檢結果：無明顯異常';
+      detail.textContent = '您目前無明顯吞嚥困難相關症狀，請維持良好飲食習慣並持續留意。';
+      box.classList.add('success');
+    }
+
+    // Scroll to result
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetAll() {
+    document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+    document.getElementById('resultBox').className = 'result';
+    document.getElementById('resultBox').classList.remove('danger', 'warning', 'success');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
