@@ -544,11 +544,11 @@
     /* Email area */
     .email-area {
       margin-top: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: none;
+      text-align: center;
     }
+
+    .email-area.show { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: center; }
     .email-label {
       font-size: 14px;
       font-weight: 600;
@@ -557,8 +557,8 @@
     }
     .email-input {
       flex: 1;
-      min-width: 220px;
-      max-width: 320px;
+      min-width: 200px;
+      max-width: 300px;
       padding: 10px 14px;
       border: 2px solid var(--border);
       border-radius: 8px;
@@ -1071,6 +1071,7 @@
 
     // Show export buttons
     document.getElementById('exportArea').classList.add('show');
+    document.getElementById('emailArea').classList.add('show');
 
     // Scroll to result
     box.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1091,6 +1092,7 @@
     document.getElementById('resultBox').className = 'result';
     document.getElementById('resultBox').classList.remove('danger', 'warning', 'success');
     document.getElementById('exportArea').classList.remove('show');
+    document.getElementById('emailArea').classList.remove('show');
 
     updateProgress();
     window.scrollTo({ top: 0, behavior: 'smooth' });
