@@ -393,6 +393,159 @@
       transform: translateY(0);
     }
 
+    .btn-upload {
+      background: linear-gradient(135deg, #2980b9, #1a5276);
+      color: white;
+      border: none;
+      padding: 12px 36px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(41, 128, 185, 0.3);
+      margin-left: 12px;
+    }
+
+    .btn-upload:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+    }
+
+    .btn-upload:active {
+      transform: translateY(0);
+    }
+
+    .btn-upload:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-upload.success {
+      background: linear-gradient(135deg, #27ae60, #1e8449);
+      box-shadow: 0 4px 14px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-upload.error {
+      background: linear-gradient(135deg, #c0392b, #922b21);
+      box-shadow: 0 4px 14px rgba(192, 57, 43, 0.3);
+    }
+
+    .upload-status {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      min-height: 22px;
+    }
+
+    .upload-status.success { color: var(--success); font-weight: 600; }
+    .upload-status.error { color: var(--danger); font-weight: 600; }
+    .upload-status.info { color: var(--primary); }
+
+    /* Reset button */
+    .btn-reset {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: #888;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: all 0.2s;
+    }
+    .btn-reset:hover {
+      border-color: var(--warning);
+      color: var(--warning);
+      background: #fff8f0;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .modal-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+    .modal-report {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .modal-actions .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: #888;
+      padding: 10px 24px;
+      font-size: 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-actions .btn-secondary:hover {
+      border-color: #999;
+      color: var(--text);
+    }
+    .modal-actions .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #1a4a6e);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-actions .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(44,110,156,0.3);
+    }
+
+    /* Reset confirm modal */
+    .modal-overlay.reset-modal .modal-box {
+      border-top: 4px solid var(--warning);
+    }
+
     /* Result */
     .result {
       background: var(--card-bg);
@@ -639,7 +792,25 @@
   <!-- Export/Download buttons -->
   <div class="export-area no-print" id="exportArea">
     <button class="btn-download" onclick="downloadReport()">📥 下載報告</button>
+    <button class="btn-upload" id="btnUpload" onclick="showUploadConfirm()">📁 上傳報告到 Google Drive</button>
     <button class="btn-print" onclick="window.print()">🖨️ 列印</button>
+    <button class="btn-reset" onclick="confirmReset()">🔄 重新填寫</button>
+  </div>
+
+  <!-- Upload status message -->
+  <div class="upload-status" id="uploadStatus"></div>
+
+  <!-- Upload Confirmation Modal -->
+  <div class="modal-overlay" id="uploadModal" onclick="closeUploadModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h2 class="modal-title">📋 請確認報告內容</h2>
+      <p class="modal-subtitle">請核對以下報告內容，確認無誤後再上傳。</p>
+      <div class="modal-report" id="modalReportText"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeUploadModal()">取消</button>
+        <button class="btn-primary" id="btnConfirmUpload" onclick="doUploadReport()">✅ 確認上傳</button>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -906,8 +1077,79 @@
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    document.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  async function showUploadConfirm() {
+    const text = buildReportText();
+    document.getElementById('modalReportText').textContent = text;
+    document.getElementById('uploadModal').classList.add('show');
+  }
+
+  function closeUploadModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('uploadModal').classList.remove('show');
+  }
+
+  async function doUploadReport() {
+    const btn = document.getElementById('btnConfirmUpload');
+    const status = document.getElementById('uploadStatus');
+    const text = buildReportText();
+    const info = getBasicInfo();
+
+    closeUploadModal();
+    btn.disabled = true;
+    btn.textContent = '⏳ 上傳中...';
+
+    const uploadBtn = document.getElementById('btnUpload');
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = '⏳ 上傳中...';
+    status.textContent = '正在上傳報告至 Google Drive...';
+    status.className = 'upload-status info';
+
+    try {
+      const response = await fetch('https://mchassistant-web-service.zeabur.app/api/dysphagia/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report: text,
+          patientName: info.name,
+          date: info.date
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: '上傳失敗，請稍後再試' }));
+        throw new Error(err.error || '上傳失敗');
+      }
+
+      const result = await response.json();
+      uploadBtn.textContent = '✅ 已上傳';
+      uploadBtn.classList.add('success');
+      status.textContent = `✅ 報告已成功儲存至 Google Drive（檔案 ID：${result.fileId}）`;
+      status.className = 'upload-status success';
+
+    } catch (e) {
+      uploadBtn.textContent = '📁 上傳報告到 Google Drive';
+      uploadBtn.classList.add('error');
+      uploadBtn.disabled = false;
+      status.textContent = '❌ ' + e.message;
+      status.className = 'upload-status error';
+      setTimeout(() => {
+        uploadBtn.classList.remove('error');
+        uploadBtn.textContent = '📁 上傳報告到 Google Drive';
+      }, 3000);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '✅ 確認上傳';
+  }
+
+  function confirmReset() {
+    if (confirm('確定要清除所有填寫內容並重新填寫嗎？')) {
+      resetAll();
+    }
   }
 </script>
 
